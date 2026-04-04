@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FacultyLinkApplication.Dto;
 
 
 namespace FacultyLinkApplication.Service
@@ -23,7 +24,7 @@ namespace FacultyLinkApplication.Service
             var getAllUsers = _appDbContext.Users.ToList();
             if (getAllUsers == null || getAllUsers.Count == 0)
             {
-                throw new Exception("No users found");
+                throw new AppException("No user found");
             }
             return getAllUsers;
         }
@@ -34,7 +35,7 @@ namespace FacultyLinkApplication.Service
 
             if (getUser == null)
             {
-                throw new Exception("User not found");
+                throw new AppException("User not found");
             }
             return getUser;
         }
@@ -45,7 +46,7 @@ namespace FacultyLinkApplication.Service
 
             if (getUser == null)
             {
-                throw new Exception("User not found");
+                throw new AppException("User not found");
             }
             return getUser;
         }

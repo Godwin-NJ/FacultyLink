@@ -3,30 +3,37 @@ using FacultyLinkApplication.Interface;
 using FacultyLinkDomain;
 using FacultyLinkDomain.Model;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace FacultyLinkApplication.Service
 {
     public class SecurityService : ISecurity
     {
         private readonly AppDbContext _appContext;
-        public SecurityService(AppDbContext appDbContext) 
+        private readonly ILogger<SecurityService> _log;
+      
+        public SecurityService(AppDbContext appDbContext, ILogger<SecurityService> log) 
         {
             _appContext = appDbContext;
+            _log = log;           
         }
         public ResponseMsg<User> CreateUser(UserDto user)
         {
             var userExist = _appContext.Users.FirstOrDefault(u => u.Email == user.Email);
             if (userExist != null)
             {
-                throw new Exception("User with this email already exists.");
+                _log.LogInformation($"User : {user.Email} already exist");
+                throw new AppException("User with this email already exists.");
             }
 
-            var hashPassword = HashPassword(user.Password, new User { Email = user.Email });
+            var hashPassword = HashPassword(user.Password);
 
             _appContext.Users.Add(new User
             {
@@ -50,21 +57,44 @@ namespace FacultyLinkApplication.Service
 
         public LoginRespDto Login(LoginDto login)
         {
-            throw new NotImplementedException();
+            var userExist = _appContext.Users.SingleOrDefault(x => x.Email == login.Email);            
+
+            if (userExist == null)
+            {
+                _log.LogInformation($"User : {login.Email} does not exist");
+                throw new AppException("Invalid username or password");
+            }
+
+            var hashPwd = HashPassword(login.Password);
+            var verifyPwd = VerifyHashPassword(userExist.Password, hashPwd);
+
+            if(!verifyPwd)
+            {
+                _log.LogInformation($"User : {login.Email} invalid password");
+                throw new AppException("Invalid username or password");
+            }
+
+
+            var dt = new LoginDto
+            {
+
+            };
+
+            return new LoginRespDto();
         }
 
-        public string HashPassword(string passowrd, User user)
+        public string HashPassword(string passowrd)
         {
-            var passwordHasher = new PasswordHasher<User>();
-            var result = passwordHasher.HashPassword(user, passowrd);
+            var passwordHasher = new PasswordHasher<object>();
+            var result = passwordHasher.HashPassword(null!, passowrd);
             return result;
 
         }
 
-        public bool VerifyHashPassword(string password, string hashedPassword, User user)
+        public bool VerifyHashPassword(string password, string hashedPassword)
         {
-            var passwordHasher = new PasswordHasher<User>();
-            PasswordVerificationResult result = passwordHasher.VerifyHashedPassword(user, hashedPassword, password);
+            var passwordHasher = new PasswordHasher<object>();
+            PasswordVerificationResult result = passwordHasher.VerifyHashedPassword(null!, hashedPassword, password);
             return result == PasswordVerificationResult.Success ? true : false;
         }
     }

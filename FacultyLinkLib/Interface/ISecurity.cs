@@ -12,7 +12,7 @@ namespace FacultyLinkApplication.Interface
     {
         ResponseMsg<User> CreateUser(UserDto user);
         LoginRespDto Login(LoginDto login);
-        string HashPassword(string passowrd, User user);
-        bool VerifyHashPassword(string password, string hashedPassword, User user);
+        string HashPassword(string password);
+        bool VerifyHashPassword(string password, string hashedPassword);
     }
 }
