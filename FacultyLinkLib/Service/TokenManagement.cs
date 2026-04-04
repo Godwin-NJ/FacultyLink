@@ -20,7 +20,7 @@ namespace FacultyLinkApplication.Service
         public TokenManagement(IConfiguration config)
         {
             _config = config;
-            _tokenConfig = _config.Get<TokenManagementDto>();
+            _tokenConfig = _config.GetSection("TokenManagement").Get<TokenManagementDto>();
         }
         public string GenerateToken(User user)
         {

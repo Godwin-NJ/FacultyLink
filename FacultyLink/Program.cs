@@ -16,7 +16,7 @@ var connectionString =
     builder.Configuration.GetConnectionString("DefaultConnection")
         ?? throw new InvalidOperationException("Connection string not found");
 
-var _tokenConfig = builder.Configuration.Get<TokenManagementDto>();
+var _tokenConfig = builder.Configuration.GetSection("TokenManagement").Get<TokenManagementDto>();
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
