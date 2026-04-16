@@ -22,13 +22,13 @@ namespace FacultyLinkDomain.Model
         public required string LastName { get; set; }
         [Required]
         [EmailAddress(ErrorMessage = "Invalid Email Address.")]
-        public required string Email { get; set; } // email will server as username
+        public required string Email { get; set; } // email will serve as username
         [MinLength(8, ErrorMessage = "Password must be at least 8 characters long.")]
         [Required]
         public required string Password { get; set; }       
         public DateTime CreatedDate { get; set; }
         public int UpdatedBy { get; set; }
-        public DateTime ModifiedDate { get; set; }   
+        public DateTime? ModifiedDate { get; set; } 
         public bool IsActive { get; set; } 
         public int FailedLoginCount { get; set; }
         public bool IsLocked { get; set; }

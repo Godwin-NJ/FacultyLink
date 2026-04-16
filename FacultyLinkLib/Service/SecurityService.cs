@@ -18,11 +18,13 @@ namespace FacultyLinkApplication.Service
     {
         private readonly AppDbContext _appContext;
         private readonly ILogger<SecurityService> _log;
-      
-        public SecurityService(AppDbContext appDbContext, ILogger<SecurityService> log) 
+        private readonly ITokenManagement _tokenManagement;
+
+        public SecurityService(AppDbContext appDbContext, ILogger<SecurityService> log, ITokenManagement tokenManagement)
         {
             _appContext = appDbContext;
-            _log = log;           
+            _log = log;
+            _tokenManagement = tokenManagement;
         }
         public ResponseMsg<User> CreateUser(UserDto user)
         {
@@ -65,8 +67,8 @@ namespace FacultyLinkApplication.Service
                 throw new AppException("Invalid username or password");
             }
 
-            var hashPwd = HashPassword(login.Password);
-            var verifyPwd = VerifyHashPassword(userExist.Password, hashPwd);
+          
+            var verifyPwd = VerifyHashPassword(userExist, userExist.Password, login.Password);
 
             if(!verifyPwd)
             {
@@ -75,12 +77,14 @@ namespace FacultyLinkApplication.Service
             }
 
 
-            var dt = new LoginDto
+            var dt = new LoginRespDto
             {
-
+                Name = $"{userExist.FirstName} {userExist.LastName}",
+                Email = userExist.Email,
+                Token = _tokenManagement.GenerateToken(userExist)
             };
 
-            return new LoginRespDto();
+            return dt;
         }
 
         public string HashPassword(string passowrd)
@@ -91,10 +95,10 @@ namespace FacultyLinkApplication.Service
 
         }
 
-        public bool VerifyHashPassword(string password, string hashedPassword)
+        public bool VerifyHashPassword(User user, string hashedPassword, string password)
         {
-            var passwordHasher = new PasswordHasher<object>();
-            PasswordVerificationResult result = passwordHasher.VerifyHashedPassword(null!, hashedPassword, password);
+            var passwordHasher = new PasswordHasher<User>();
+            PasswordVerificationResult result = passwordHasher.VerifyHashedPassword(user, hashedPassword, password);
             return result == PasswordVerificationResult.Success ? true : false;
         }
     }

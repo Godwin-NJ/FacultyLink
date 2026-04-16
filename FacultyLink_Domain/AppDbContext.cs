@@ -22,6 +22,10 @@ namespace FacultyLinkDomain
             modelBuilder.Entity<User>()
                 .Property(b => b.IsActive)
                 .HasDefaultValue(true);
+            modelBuilder.Entity<User>()
+                .Property(b => b.CreatedDate)
+                .HasDefaultValue(DateTime.UtcNow);
+           
         }
     }
 }

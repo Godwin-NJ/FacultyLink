@@ -1,4 +1,5 @@
 ﻿using FacultyLinkApplication.Interface;
+using FacultyLinkDomain.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -7,7 +8,7 @@ namespace FacultyLink.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class UsersController : ControllerBase
     {
         private readonly IUser _userMd;
@@ -18,8 +19,9 @@ namespace FacultyLink.Controllers
 
         /// <summary>
         /// Gets all users
-        /// </summary>
-        /// <returns></returns>
+        /// </summary>  
+        /// <returns>/// </returns>
+        [ProducesResponseType(typeof(List<User>), 200)]
         [HttpGet("getallusers")]
         public ActionResult GetAllUsers()
         {
@@ -32,6 +34,7 @@ namespace FacultyLink.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
+         [ProducesResponseType(typeof(User), 200)]
         [HttpGet("getuserbyid")]
         public ActionResult GetUser(int id)
         {
@@ -44,6 +47,7 @@ namespace FacultyLink.Controllers
         /// </summary>
         /// <param name="email"></param>
         /// <returns></returns>
+        [ProducesResponseType(typeof(User), 200)]
         [HttpGet("getuserbyemailaddress")]
         public ActionResult GetUserByEmailAddress(string email)
         {
