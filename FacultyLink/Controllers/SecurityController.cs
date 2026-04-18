@@ -1,5 +1,6 @@
 ﻿using FacultyLinkApplication.Dto;
 using FacultyLinkApplication.Interface;
+using FacultyLinkApplication.Utility;
 using FacultyLinkDomain.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -9,7 +10,7 @@ namespace FacultyLink.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
+    [Authorize(Roles = Constant.Admin + "," + Constant.HeadOfUnit)]
     public class SecurityController : ControllerBase
     {
         private readonly ISecurity _security;
@@ -35,6 +36,7 @@ namespace FacultyLink.Controllers
         /// User login
         ///</summary>
         [HttpPost("login")]
+        [AllowAnonymous]
         public ActionResult<LoginRespDto> Login(LoginDto login)
         {
             var loginData = _security.Login(login);

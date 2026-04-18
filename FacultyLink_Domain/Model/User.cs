@@ -28,9 +28,12 @@ namespace FacultyLinkDomain.Model
         public required string Password { get; set; }       
         public DateTime CreatedDate { get; set; }
         public int UpdatedBy { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime? ModifiedDate { get; set; } 
         public bool IsActive { get; set; } 
         public int FailedLoginCount { get; set; }
         public bool IsLocked { get; set; }
+        public int? GroupId { get; set; }
+        public UserGroup? UserGroup { get; set; }
     }
 }

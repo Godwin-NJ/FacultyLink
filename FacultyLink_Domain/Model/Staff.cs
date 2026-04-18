@@ -29,11 +29,13 @@ namespace FacultyLinkDomain.Model
         public int DepartmentId { get; set; }
         public Department Department { get; set; }
         [Required]
-        public int GroupId { get; set; }
-        public UserGroup UserGroup { get; set; }
+        public int? GroupId { get; set; }
+        public UserGroup? UserGroup { get; set; }
         public bool IsActive { get; set; } = true;
         [Required]
-        public bool IsAcademic { get; set; }
+        public bool IsAcademic { get; set; }        
+        public int? PositionId { get; set; }
+        public Position? Position { get; set; }
         public DateTime? ModifiedDate { get; set; } 
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
     }

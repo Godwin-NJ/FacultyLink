@@ -1,5 +1,6 @@
 ﻿using FacultyLinkApplication.Dto;
 using FacultyLinkApplication.Interface;
+using FacultyLinkDomain;
 using FacultyLinkDomain.Model;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -17,18 +18,24 @@ namespace FacultyLinkApplication.Service
     {
         private readonly IConfiguration _config;
         private readonly TokenManagementDto _tokenConfig;
-        public TokenManagement(IConfiguration config)
+        private readonly AppDbContext _context;
+        public TokenManagement(IConfiguration config, AppDbContext context)
         {
             _config = config;
-            _tokenConfig = _config.GetSection("TokenManagement").Get<TokenManagementDto>();
+            _tokenConfig = _config.GetSection("TokenManagement").Get<TokenManagementDto>() ?? new TokenManagementDto();
+            _context = context;
         }
         public string GenerateToken(User user)
         {
+            var role = _context.UserGroup.Where(x => x.GroupId == user.GroupId)?.Select(g => g.Name)
+                        .FirstOrDefault() ?? string.Empty;
+
             var claims = new[]
             {
                 new Claim(ClaimTypes.Name,user.Email),
                 new Claim(ClaimTypes.Surname,user.LastName),
                 new Claim("userid",user.Id.ToString()),
+                new Claim(ClaimTypes.Role, role),
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_tokenConfig.SecretKey));

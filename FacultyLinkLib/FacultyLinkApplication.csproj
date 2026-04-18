@@ -16,8 +16,4 @@
     <ProjectReference Include="..\FacultyLink_Domain\FacultyLinkDomain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Utility\" />
-  </ItemGroup>
-
 </Project>

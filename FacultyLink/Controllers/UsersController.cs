@@ -1,4 +1,5 @@
 ﻿using FacultyLinkApplication.Interface;
+using FacultyLinkApplication.Utility;
 using FacultyLinkDomain.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -8,7 +9,7 @@ namespace FacultyLink.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize(Roles = Constant.Admin + "," + Constant.HeadOfUnit + "," + Constant.OfficeAdministrator)]
     public class UsersController : ControllerBase
     {
         private readonly IUser _userMd;

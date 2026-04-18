@@ -45,6 +45,8 @@ namespace FacultyLinkDomain.Model
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
         public int? StaffId { get; set; }       
         public Staff? AssignedAdvisor { get; set; }
+        public int? GroupId { get; set; }
+        public UserGroup? UserGroup { get; set; }
 
     }
 }
