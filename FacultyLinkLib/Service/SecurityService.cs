@@ -2,6 +2,7 @@
 using FacultyLinkApplication.Interface;
 using FacultyLinkDomain;
 using FacultyLinkDomain.Model;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Serilog;
@@ -19,12 +20,16 @@ namespace FacultyLinkApplication.Service
         private readonly AppDbContext _appContext;
         private readonly ILogger<SecurityService> _log;
         private readonly ITokenManagement _tokenManagement;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public SecurityService(AppDbContext appDbContext, ILogger<SecurityService> log, ITokenManagement tokenManagement)
+        public SecurityService(AppDbContext appDbContext, ILogger<SecurityService> log, 
+            ITokenManagement tokenManagement,
+            IHttpContextAccessor httpContextAccessor)
         {
             _appContext = appDbContext;
             _log = log;
             _tokenManagement = tokenManagement;
+            _httpContextAccessor = httpContextAccessor;
         }
         public ResponseMsg<User> CreateUser(UserDto user)
         {
@@ -59,7 +64,7 @@ namespace FacultyLinkApplication.Service
 
         public LoginRespDto Login(LoginDto login)
         {
-            var userExist = _appContext.Users.SingleOrDefault(x => x.Email == login.Email);            
+            var userExist = _appContext.Users.SingleOrDefault(x => x.Email == login.Email);           
 
             if (userExist == null)
             {
@@ -67,7 +72,10 @@ namespace FacultyLinkApplication.Service
                 throw new AppException("Invalid username or password");
             }
 
-          
+            var userRole = _appContext.UserGroup.Where(x => x.GroupId == userExist.GroupId)?.Select(g => g.Name)
+                       .FirstOrDefault() ?? string.Empty;
+
+
             var verifyPwd = VerifyHashPassword(userExist, userExist.Password, login.Password);
 
             if(!verifyPwd)
@@ -81,7 +89,9 @@ namespace FacultyLinkApplication.Service
             {
                 Name = $"{userExist.FirstName} {userExist.LastName}",
                 Email = userExist.Email,
-                Token = _tokenManagement.GenerateToken(userExist)
+                Token = _tokenManagement.GenerateToken(userExist),
+                Role = userRole,
+                RoleId = userExist.GroupId ?? 0
             };
 
             return dt;
@@ -100,6 +110,19 @@ namespace FacultyLinkApplication.Service
             var passwordHasher = new PasswordHasher<User>();
             PasswordVerificationResult result = passwordHasher.VerifyHashedPassword(user, hashedPassword, password);
             return result == PasswordVerificationResult.Success ? true : false;
+        }
+
+        public string GetClaimInfoFromToken(string targetClaim)
+        {
+            var claimValue = _httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(c => c.Type == targetClaim)?.Value;
+            return claimValue ?? string.Empty;
+        }
+
+        public string GetUsersToken()
+        {
+            //var token = await HttpContext.GetTokenAsync("access_token");// ASPDOTNET default method of getting the raw token
+            var token = _httpContextAccessor.HttpContext?.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
+            return token ?? string.Empty;
         }
     }
 }

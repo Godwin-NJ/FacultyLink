@@ -1,5 +1,6 @@
 ﻿using FacultyLinkApplication.Dto;
 using FacultyLinkApplication.Interface;
+using FacultyLinkApplication.Utility;
 using FacultyLinkDomain;
 using FacultyLinkDomain.Model;
 using Microsoft.Extensions.Configuration;
@@ -34,7 +35,7 @@ namespace FacultyLinkApplication.Service
             {
                 new Claim(ClaimTypes.Name,user.Email),
                 new Claim(ClaimTypes.Surname,user.LastName),
-                new Claim("userid",user.Id.ToString()),
+                new Claim(Constant.UserIdClaim,user.Id.ToString()),
                 new Claim(ClaimTypes.Role, role),
             };
 

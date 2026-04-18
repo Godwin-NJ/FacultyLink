@@ -22,10 +22,14 @@ namespace FacultyLink.Controllers
 
         /// <summary>
         /// Create User
+        /// Create Staff
+        /// Create Student
         /// </summary>
         /// <param name="dto"></param>
         /// <returns></returns>
         [HttpPost("createuser")]
+        [HttpPost("createStaff")]
+        [HttpPost("createStudent")]      
         public ActionResult<ResponseMsg<User>> CreateUser(UserDto dto)
         {
             var userData = _security.CreateUser(dto);

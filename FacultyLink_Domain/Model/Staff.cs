@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace FacultyLinkDomain.Model
@@ -22,19 +23,24 @@ namespace FacultyLinkDomain.Model
         public string? Address { get; set; }
         [Required]
         public string StaffNumber { get; set; }
+        [JsonIgnore]
         public string? ProfilePictureUrl { get; set; }
         public int FacultyId { get; set; }
+        [JsonIgnore]
         public Faculty Faculty { get; set; }
         [Required]
         public int DepartmentId { get; set; }
+        [JsonIgnore]
         public Department Department { get; set; }
         [Required]
         public int? GroupId { get; set; }
+        [JsonIgnore]
         public UserGroup? UserGroup { get; set; }
         public bool IsActive { get; set; } = true;
         [Required]
         public bool IsAcademic { get; set; }        
         public int? PositionId { get; set; }
+        [JsonIgnore]
         public Position? Position { get; set; }
         public DateTime? ModifiedDate { get; set; } 
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;

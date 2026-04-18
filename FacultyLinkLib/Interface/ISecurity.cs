@@ -14,5 +14,7 @@ namespace FacultyLinkApplication.Interface
         LoginRespDto Login(LoginDto login);
         string HashPassword(string password);
         bool VerifyHashPassword(User user, string password, string hashedPassword);
+        string GetClaimInfoFromToken(string targetClaim);
+        string GetUsersToken();
     }
 }
